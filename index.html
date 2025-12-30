@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List Ari</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 10px;
+      margin-right: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background-color: #eee;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    li.completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    li button {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>To-Do List Ari</h1>
+</header>
+
+<main>
+  <input type="text" id="taskInput" placeholder="Tambah tugas...">
+  <button onclick="tambahTugas()">Tambah</button>
+
+  <ul id="taskList"></ul>
+</main>
+
+<script>
+  const taskInput = document.getElementById('taskInput');
+  const taskList = document.getElementById('taskList');
+
+  // Ambil data dari local storage
+  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+  function simpanTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  function tampilTasks() {
+    taskList.innerHTML = '';
+    tasks.forEach((tugas, index) => {
+      const li = document.createElement('li');
+      li.textContent = tugas.nama;
+      if (tugas.selesai) li.classList.add('completed');
+
+      li.onclick = () => {
+        tugas.selesai = !tugas.selesai;
+        simpanTasks();
+        tampilTasks();
+      }
+
+      const hapusBtn = document.createElement('button');
+      hapusBtn.textContent = 'Hapus';
+      hapusBtn.onclick = (e) => {
+        e.stopPropagation();
+        tasks.splice(index, 1);
+        simpanTasks();
+        tampilTasks();
+      }
+
+      li.appendChild(hapusBtn);
+      taskList.appendChild(li);
+    });
+  }
+
+  function tambahTugas() {
+    const namaTugas = taskInput.value.trim();
+    if (namaTugas === '') return alert('Tulis tugas dulu!');
+    tasks.push({nama: namaTugas, selesai: false});
+    taskInput.value = '';
+    simpanTasks();
+    tampilTasks();
+  }
+
+  // Tampilkan daftar saat halaman dibuka
+  tampilTasks();
+</script>
+
+</body>
+</html>
